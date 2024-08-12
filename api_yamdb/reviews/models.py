@@ -8,6 +8,10 @@ from reviews.validators import real_age
 User = get_user_model()
 
 
+class User():
+    ...
+
+
 class Categories(models.Model):
     name = models.CharField(
         max_length=settings.MAXLENGTH,
