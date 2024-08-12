@@ -1,15 +1,81 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
 
 from reviews.validators import real_age
 
-User = get_user_model()
+# User = get_user_model()
 
 
-class User():
-    ...
+class User(AbstractUser):
+    '''User класс '''
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
+    ROLES = (
+        (USER, 'Пользователь'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Администратор'),
+    )
+
+    username = models.CharField(
+        'Логин',
+        max_length=150,  # вынесу - когда решим как хроним константы
+        unique=True,
+        # validators=(),
+    )
+    email = models.EmailField(
+        'E-mail',
+        unique=True,
+    )
+    first_name = models.CharField(
+        'Имя',
+        max_length=150,  # !
+        blank=True,
+    )
+    last_name = models.CharField(
+        'Фамилия',
+        max_length=150,  # !
+        blank=True,
+    )
+    bio = models.TextField(
+        'Биография',
+        null=True,
+        blank=True,
+    )
+
+    role = models.CharField(
+        'Роль',
+        default=USER,
+        choices=ROLES,
+        max_length=max(len(role) for role, _ in ROLES),
+    )
+    confirmation_code = models.CharField(
+        'Код подтверждения',
+        max_length=5,  # !
+        default=5,  # !
+    )
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_staff
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('username',)
+        # constraints = [
+        # ]
+
+    def __str__(self):
+        return self.username[:20]  # !
 
 
 class Categories(models.Model):
