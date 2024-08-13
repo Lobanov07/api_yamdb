@@ -1,8 +1,11 @@
+import datetime
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
+from rest_framework.relations import SlugRelatedField
 
-from .mixins import UsernameMixin
+from api.mixins import UsernameMixin
 from reviews.models import Categories, Genres, Title, Review, Comments
 
 
@@ -29,3 +32,73 @@ class ReviewSerializer(serializers.ModelSerializer, UsernameMixin):
     class Meta:
         model = Review
         fields = ('id', 'text', 'author', 'score', 'pub_date')
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    """Класс сериализатор для модели Categories."""
+    class Meta:
+        model = Categories
+        fields = ('name', 'slug')
+
+
+class GenresSerializer(serializers.ModelSerializer):
+    """Класс сериализатор для модели Genres."""
+    class Meta:
+        model = Genres
+        fields = ('name', 'slug')
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    """Класс сериализатор для модели Title."""
+    category = CategoriesSerializer(read_only=True)
+    genre = GenresSerializer(many=True, read_only=True)
+    rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'description',
+            'genre', 'category', 'rating'
+        )
+        read_only_fields = ('id',)
+
+
+class CreateTitleSerializer(serializers.ModelSerializer):
+    """Класс сериализатор для создания объектов модели Title."""
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Categories.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genres.objects.all(),
+        many=True
+    )
+
+    class Meta:
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
+
+    def validate_year(self, value):
+        if value > datetime.datetime.now().year and value < 0:
+            raise ValidationError(
+                'Вы ввели некорректный год.'
+                'Год создания произведения не может быть больше текущего'
+                'и меньше начала нашей эры.'
+            )
+        return value
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(
+        slug_field='username',
+        default=serializers.CurrentUserDefault(),
+        read_only=True
+    )
+
+    class Meta:
+        model = Comments
+        fields = '__all__'
+        read_only_fields = ('id', 'review')
