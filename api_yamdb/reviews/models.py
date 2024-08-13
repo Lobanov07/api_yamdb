@@ -30,6 +30,7 @@ class User(AbstractUser):
     email = models.EmailField(
         'E-mail',
         unique=True,
+        # validators=(),
     )
     first_name = models.CharField(
         'Имя',
@@ -51,7 +52,6 @@ class User(AbstractUser):
         'Роль',
         default=USER,
         choices=ROLES,
-        max_length=max(len(role) for role, _ in ROLES),
     )
     confirmation_code = models.CharField(
         'Код подтверждения',
@@ -59,20 +59,10 @@ class User(AbstractUser):
         default=5,  # !
     )
 
-    @property
-    def is_moderator(self):
-        return self.role == self.MODERATOR
-
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN or self.is_staff
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('username',)
-        # constraints = [
-        # ]
 
     def __str__(self):
         return self.username[:20]  # !
