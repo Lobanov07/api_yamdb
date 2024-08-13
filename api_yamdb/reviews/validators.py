@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.core.exceptions import ValidationError
 
@@ -10,3 +11,12 @@ def real_age(value):
             'Год создания произведения не может быть больше текущего'
             'и меньше начала нашей эры.'
         )
+
+
+def user_name(username):
+    forbidden_chars = re.findall(r'[^\w.@+-]', username)
+    if forbidden_chars:
+        raise ValidationError(
+            f'Недопустимые символы: {set(forbidden_chars)}'
+        )
+    return username

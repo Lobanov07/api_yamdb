@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
 
-from reviews.validators import real_age
+from reviews.validators import real_age, user_name
 
 # User = get_user_model()
 
@@ -25,7 +25,7 @@ class User(AbstractUser):
         'Логин',
         max_length=150,  # вынесу - когда решим как хроним константы
         unique=True,
-        # validators=(),
+        validators=(user_name,),
     )
     email = models.EmailField(
         'E-mail',
@@ -50,6 +50,7 @@ class User(AbstractUser):
 
     role = models.CharField(
         'Роль',
+        max_length=150,  # !
         default=USER,
         choices=ROLES,
     )
