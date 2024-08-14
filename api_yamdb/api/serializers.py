@@ -10,6 +10,7 @@ from reviews.models import Categories, Genres, Title, Review, Comments
 
 
 class ReviewSerializer(serializers.ModelSerializer, UsernameMixin):
+    """Класс сериализатор для модели Review."""
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
         slug_field='username',
