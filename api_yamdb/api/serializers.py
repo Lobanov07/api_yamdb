@@ -94,6 +94,7 @@ class CreateTitleSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
+    """Класс сериализатор для создания объектов модели Comments."""
     author = SlugRelatedField(
         slug_field='username',
         default=serializers.CurrentUserDefault(),

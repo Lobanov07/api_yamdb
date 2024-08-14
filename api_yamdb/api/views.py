@@ -89,6 +89,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """Класс вьюсет для модели Comments."""
     permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
     http_method_names = ('get', 'patch', 'post', 'delete')
     serializer_class = CommentsSerializer
