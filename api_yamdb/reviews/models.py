@@ -197,7 +197,7 @@ class Review(models.Model):
 
 class Comments(models.Model):
     """Модель Comments."""
-    
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

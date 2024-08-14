@@ -86,3 +86,23 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return TitleSerializer
         return CreateTitleSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
+    http_method_names = ('get', 'patch', 'post', 'delete')
+    serializer_class = CommentsSerializer
+
+    def get_review(self):
+        return get_object_or_404(
+            Review, pk=self.kwargs.get('review_id')
+        )
+
+    def get_queryset(self):
+        return self.get_review().comments.all()
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user,
+            review=self.get_review()
+        )
