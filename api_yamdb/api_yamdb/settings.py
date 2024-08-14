@@ -108,4 +108,6 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 MAXLENGTH = 256
 
+LENGTHTEXT = 100
+
 AUTH_USER_MODEL = 'reviews.User'
