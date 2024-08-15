@@ -1,17 +1,18 @@
-# from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
 
-from reviews.validators import real_age, validate_score, user_name
-from api_yamdb.settings import MAXLENGTH, LENGTHTEXT
-
-# User = get_user_model()
+from reviews.validators import (
+    real_age,
+    validate_score,
+    username_is_not_forbidden,
+    user_name
+)
 
 
 class User(AbstractUser):
-    '''User класс '''
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
@@ -23,51 +24,68 @@ class User(AbstractUser):
     )
 
     username = models.CharField(
-        'Логин',
-        max_length=150,  # вынесу - когда решим как хроним константы
+        max_length=settings.USER_MAX_LENGTH,
         unique=True,
-        validators=(user_name,),
-    )
-    email = models.EmailField(
-        'E-mail',
-        unique=True,
-        # validators=(),
-    )
-    first_name = models.CharField(
-        'Имя',
-        max_length=150,  # !
-        blank=True,
-    )
-    last_name = models.CharField(
-        'Фамилия',
-        max_length=150,  # !
-        blank=True,
+        validators=(
+            user_name,
+            username_is_not_forbidden,
+        ),
+        verbose_name='имя пользователя',
     )
     bio = models.TextField(
-        'Биография',
         null=True,
         blank=True,
+        verbose_name='биография'
     )
-
+    email = models.EmailField(
+        unique=True,
+        verbose_name='email адрес'
+    )
     role = models.CharField(
-        'Роль',
-        max_length=150,  # !
         default=USER,
         choices=ROLES,
+        max_length=max(len(role) for role, _ in ROLES),
+        verbose_name='роль'
+    )
+    first_name = models.CharField(
+        max_length=settings.USER_MAX_LENGTH,
+        blank=True,
+        verbose_name='имя'
+    )
+    last_name = models.CharField(
+        max_length=settings.USER_MAX_LENGTH,
+        blank=True,
+        verbose_name='фамилия'
     )
     confirmation_code = models.CharField(
-        'Код подтверждения',
-        max_length=5,  # !
-        default=5,  # !
+        max_length=settings.CODE_MAX_LEN,
+        default=settings.CODE_MAX_LEN,
+        verbose_name='код подтверждения'
     )
+
+    REQUIRED_FIELDS = ('email',)
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('username',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["email", "username"],
+                name="unique_email_username",
+            ),
+        ]
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_staff
 
     def __str__(self):
-        return self.username[:20]  # !
+        return self.username[:settings.ADMIN_DISPLEY_PAGINATOR]
 
 
 class Categories(models.Model):
@@ -94,7 +112,7 @@ class Genres(models.Model):
     """Модель Genres."""
 
     name = models.CharField(
-        max_length=MAXLENGTH,
+        max_length=settings.MAXLENGTH,
     )
     slug = models.SlugField(
         max_length=50,
@@ -149,7 +167,7 @@ class Title(models.Model):
         verbose_name_plural = 'Названия'
 
     def __str__(self):
-        return self.name[:LENGTHTEXT]
+        return self.name[:settings.LENGTHTEXT]
 
 
 class Review(models.Model):
@@ -192,7 +210,7 @@ class Review(models.Model):
         verbose_name_plural = 'Отзывы'
 
     def __str__(self):
-        return self.title[:LENGTHTEXT]
+        return self.title[:settings.LENGTHTEXT]
 
 
 class Comments(models.Model):
@@ -225,4 +243,4 @@ class Comments(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
-        return self.text[:LENGTHTEXT]
+        return self.text[:settings.LENGTHTEXT]
