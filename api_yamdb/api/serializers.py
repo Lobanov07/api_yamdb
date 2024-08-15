@@ -1,31 +1,58 @@
+import re
+
+from django.contrib.auth import get_user_model
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 
 from .mixins import UsernameMixin
-from reviews.models import Categories, Genres, Title, Review, Comments
+from reviews.validators import validate_confirmation_code
+
+User = get_user_model()
+
+MAX_LENGTH_USERNAME = 150
+MAX_LENGTH_EMAIL = 254
 
 
-class ReviewSerializer(serializers.ModelSerializer, UsernameMixin):
-    author = serializers.SlugRelatedField(
-        default=serializers.CurrentUserDefault(),
-        slug_field='username',
-        read_only=True
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
+        )
+
+
+class GetTokenSerializer(serializers.Serializer, UsernameMixin):
+    username = serializers.CharField(required=True,
+                                     max_length=MAX_LENGTH_USERNAME)
+    confirmation_code = serializers.CharField(
+        required=True,
+        max_length=settings.CODE_MAX_LEN,
+        validators=(validate_confirmation_code,)
     )
 
-    def validate(self, data):
-        request = self.context['request']
-        if request.method != 'POST':
-            return data
-        if Review.objects.filter(
-                title=get_object_or_404(
-                    Title, pk=self.context['view'].kwargs.get('title_id')
-                ), author=request.user
-        ).exists():
-            raise ValidationError('Вы не можете добавить более'
-                                  'одного отзыва на произведение')
-        return data
+    def validate_confirmation_code(self, pin_code):
+        if pin_code == settings.DEFAULT_CONF_CODE:
+            raise ValidationError(
+                'Ошибка. Сначала получите код подтверждения.'
+            )
+        invalid_chars = re.findall(
+            fr"'{re.escape(settings.PATTERN)}\s'", pin_code
+        )
+        if invalid_chars:
+            raise ValidationError(
+                f'Код не должен содержать символы {invalid_chars}'
+            )
+        return pin_code
 
-    class Meta:
-        model = Review
-        fields = ('id', 'text', 'author', 'score', 'pub_date')
+
+class SignUpSerializer(serializers.Serializer, UsernameMixin):
+    username = serializers.CharField(required=True,
+                                     max_length=MAX_LENGTH_USERNAME)
+    email = serializers.EmailField(required=True,
+                                   max_length=MAX_LENGTH_EMAIL)
+
+
+class NotAdminSerializer(serializers.ModelSerializer, UsernameMixin):
+    class Meta(UserSerializer.Meta):
+        read_only_fields = ('role',)
