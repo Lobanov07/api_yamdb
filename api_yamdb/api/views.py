@@ -169,10 +169,18 @@ class GenresViewSet(ListCreateDelViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     """Класс вьюсет для модели Title."""
 
-    queryset = Title.objects.select_related('category').\
-        prefetch_related('genre').annotate(rating=Avg('reviews__score'))
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).order_by(
+        *Title._meta.ordering
+    ).select_related(
+        'category'
+    ).prefetch_related(
+        'genre'
+    )
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter
+    http_method_names = ('get', 'patch', 'post', 'delete')
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
