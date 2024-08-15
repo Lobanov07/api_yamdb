@@ -9,7 +9,7 @@ class IsAdmin(permissions.IsAdminUser):
         )
 
 
-class IsAdminModeratorOwnerOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
+class IsOwnerAdminModeratorOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS
