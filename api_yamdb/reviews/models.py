@@ -92,7 +92,7 @@ class Categories(models.Model):
     """Модель Categories."""
 
     name = models.CharField(
-        max_length=MAXLENGTH,
+        max_length=settings.MAXLENGTH,
         verbose_name='Категория'
     )
     slug = models.SlugField(
@@ -136,7 +136,7 @@ class Title(models.Model):
     """Модель Title."""
 
     name = models.CharField(
-        max_length=MAXLENGTH,
+        max_length=settings.MAXLENGTH,
         verbose_name='Произведение'
     )
     year = models.IntegerField(
