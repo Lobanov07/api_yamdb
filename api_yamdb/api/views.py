@@ -18,8 +18,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .permissions import (
     IsAdmin,
-    IsAdminOrReadOnly,
-    IsOwnerAdminModeratorOrReadOnly
+    IsOwnerAdminModeratorOrReadOnly,
+    IsAdminOrReadOnly
 )
 from .serializers import (
     UserSerializer,
@@ -137,18 +137,6 @@ class APISignup(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ListCreateDelViewSet(
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
-    lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
-
-
 class ReviewViewSet(viewsets.ModelViewSet):
     """Класс вьюсет для модели Review."""
     permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
@@ -185,7 +173,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.select_related('category').\
         prefetch_related('genre').annotate(rating=Avg('reviews__score'))
     permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
     http_method_names = ('get', 'patch', 'post', 'delete')
 

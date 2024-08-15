@@ -96,6 +96,7 @@ class Categories(models.Model):
         verbose_name='Категория'
     )
     slug = models.SlugField(
+        max_length=settings.LENGTHSLUG,
         unique=True,
         verbose_name='Идентификатор'
     )
@@ -115,7 +116,7 @@ class Genres(models.Model):
         max_length=settings.MAXLENGTH,
     )
     slug = models.SlugField(
-        max_length=50,
+        max_length=settings.LENGTHSLUG,
         unique=True,
         validators=[RegexValidator(
             regex=r'^[-a-zA-Z0-9_]+$',
@@ -185,7 +186,7 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         validators=(validate_score,),
-        verbose_name='рейтинг', 
+        verbose_name='рейтинг',
     )
     pub_date = models.DateTimeField(
         'Дата добавления',
