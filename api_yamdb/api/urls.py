@@ -6,7 +6,7 @@ from .views import (UserViewSet,
 
 router = routers.DefaultRouter()
 
-router.register('users', UserViewSet, basename='get_token')
+router.register('users', UserViewSet)
 
 
 auth = [
