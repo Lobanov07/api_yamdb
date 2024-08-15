@@ -17,7 +17,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .permissions import (
     IsAdmin,
-    IsOwnerAdminModeratorOrReadOnly
+    IsOwnerAdminModeratorOrReadOnly,
+    IsAdminOrReadOnly
 )
 from .serializers import (
     UserSerializer,
@@ -50,7 +51,7 @@ class ListCreateDelViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
@@ -135,18 +136,6 @@ class APISignup(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ListCreateDelViewSet(
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
-    lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
-
-
 class ReviewViewSet(viewsets.ModelViewSet):
     """Класс вьюсет для модели Review."""
     permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
@@ -182,7 +171,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     queryset = Title.objects.select_related('category').\
         prefetch_related('genre').annotate(rating=Avg('reviews__score'))
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter
 
     def get_serializer_class(self):

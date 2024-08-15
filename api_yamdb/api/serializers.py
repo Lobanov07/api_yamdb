@@ -3,6 +3,7 @@ import re
 
 # from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -120,6 +121,10 @@ class TitleSerializer(serializers.ModelSerializer):
             'id', 'name', 'year', 'description',
             'genre', 'category', 'rating'
         )
+
+    def get_rating(self, obj):
+        rating = obj.reviews.aggregate(Avg('score', default=0))
+        return rating.get('score__avg')
 
 
 class CreateTitleSerializer(serializers.ModelSerializer):
