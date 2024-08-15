@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 # from django.contrib.auth import get_user_model
 from django.db.models import Avg
 from rest_framework import filters, mixins, status, viewsets
@@ -17,6 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .permissions import (
     IsAdmin,
+    IsAdminOrReadOnly,
     IsOwnerAdminModeratorOrReadOnly
 )
 from .serializers import (
@@ -50,7 +52,7 @@ class ListCreateDelViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
@@ -182,8 +184,10 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     queryset = Title.objects.select_related('category').\
         prefetch_related('genre').annotate(rating=Avg('reviews__score'))
-    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
+    http_method_names = ('get', 'patch', 'post', 'delete')
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:

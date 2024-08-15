@@ -1,13 +1,21 @@
 import datetime
+<<<<<<< HEAD
+
+=======
 import re
 
 # from django.contrib.auth import get_user_model
 from django.conf import settings
+>>>>>>> 9bd3d623af3deac8dc6a608dbc2ba92be268ba21
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
 
+<<<<<<< HEAD
+from api.mixins import UsernameMixin
+from reviews.models import Categories, Genres, Title, Review, Comments
+=======
 from .mixins import UsernameMixin
 from reviews.validators import validate_confirmation_code
 from reviews.models import (
@@ -64,6 +72,7 @@ class SignUpSerializer(serializers.Serializer, UsernameMixin):
 class NotAdminSerializer(serializers.ModelSerializer, UsernameMixin):
     class Meta(UserSerializer.Meta):
         read_only_fields = ('role',)
+>>>>>>> 9bd3d623af3deac8dc6a608dbc2ba92be268ba21
 
 
 class ReviewSerializer(serializers.ModelSerializer, UsernameMixin):
