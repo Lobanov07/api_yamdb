@@ -19,9 +19,9 @@ class IsOwnerAdminModeratorOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
         )
 
 
-class IsAdminOrReadOnly(IsAdmin):
-    def has_permission(self, request, view):
-        return (
-            super().has_permission(request, view)
-            or request.method in permissions.SAFE_METHODS
-        )
+# class IsAdminOrReadOnly(IsAdmin):
+#     def has_permission(self, request, view):
+#         return (
+#             super().has_permission(request, view)
+#             or request.method in permissions.SAFE_METHODS
+#         )
