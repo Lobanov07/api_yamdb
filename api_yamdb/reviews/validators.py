@@ -13,6 +13,11 @@ def real_age(value):
             'и меньше начала нашей эры.'
         )
 
+def validate_score(value):
+    if value < 1 or value > 10:
+        raise ValidationError(
+            f'Значение должно быть в диапазоне от 1 до 10. Указано: {value}'
+        )
 
 def validate_score(value):
     if value < 1 or value > 10:

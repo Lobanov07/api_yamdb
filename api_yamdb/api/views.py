@@ -41,7 +41,20 @@ class PermittedMethodsAndSearchFilterViewSet(
     http_method_names = ('get', 'patch', 'post', 'delete')
 
 
+class ListCreateDelViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    permission_classes = (IsOwnerAdminModeratorOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=name',)
+
+
 class UserViewSet(viewsets.ModelViewSet):
+    """Класс вьюсет для модели User."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdmin,)
