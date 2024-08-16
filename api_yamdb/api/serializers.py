@@ -1,7 +1,7 @@
 import datetime
 import re
 
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.db.models import Avg
 from rest_framework import serializers
@@ -17,13 +17,14 @@ from reviews.models import (
     Title,
     Review,
     Comments,
-    User
 )
 
-# User = get_user_model()
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # bio = serializers.CharField(*args, **kwargs)
+
     class Meta:
         model = User
         fields = (
@@ -111,7 +112,7 @@ class GenresSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     """Класс сериализатор для модели Title."""
-    category = CategoriesSerializer(read_only=True)
+    category = CategoriesSerializer(many=True, read_only=True)
     genre = GenresSerializer(many=True, read_only=True)
     rating = serializers.SerializerMethodField(read_only=True)
 

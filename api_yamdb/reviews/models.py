@@ -33,7 +33,6 @@ class User(AbstractUser):
         verbose_name='имя пользователя',
     )
     bio = models.TextField(
-        null=True,
         blank=True,
         verbose_name='биография'
     )
@@ -44,7 +43,7 @@ class User(AbstractUser):
     role = models.CharField(
         default=USER,
         choices=ROLES,
-        max_length=max(len(role) for role, _ in ROLES),
+        max_length=settings.USER_MAX_LENGTH,
         verbose_name='роль'
     )
     first_name = models.CharField(
@@ -153,7 +152,7 @@ class Title(models.Model):
         Categories,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='titles',
+
         verbose_name='категория'
     )
     genre = models.ManyToManyField(
