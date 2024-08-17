@@ -1,4 +1,3 @@
-import datetime
 import re
 
 from django.contrib.auth import get_user_model
@@ -143,17 +142,9 @@ class CreateTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'description',
+            'genre', 'category'
         )
-
-    def validate_year(self, value):
-        if value > datetime.datetime.now().year and value < 0:
-            raise ValidationError(
-                'Вы ввели некорректный год.'
-                'Год создания произведения не может быть больше текущего'
-                'и меньше начала нашей эры.'
-            )
-        return value
 
 
 class CommentsSerializer(serializers.ModelSerializer):
