@@ -33,7 +33,6 @@ class User(AbstractUser):
         verbose_name='имя пользователя',
     )
     bio = models.TextField(
-        null=True,
         blank=True,
         verbose_name='биография'
     )
@@ -44,7 +43,7 @@ class User(AbstractUser):
     role = models.CharField(
         default=USER,
         choices=ROLES,
-        max_length=max(len(role) for role, _ in ROLES),
+        max_length=settings.USER_MAX_LENGTH,
         verbose_name='роль'
     )
     first_name = models.CharField(
@@ -96,6 +95,7 @@ class Categories(models.Model):
         verbose_name='Категория'
     )
     slug = models.SlugField(
+        max_length=settings.LENGTHSLUG,
         unique=True,
         verbose_name='Идентификатор'
     )
@@ -115,7 +115,7 @@ class Genres(models.Model):
         max_length=settings.MAXLENGTH,
     )
     slug = models.SlugField(
-        max_length=50,
+        max_length=settings.LENGTHSLUG,
         unique=True,
         validators=[RegexValidator(
             regex=r'^[-a-zA-Z0-9_]+$',
@@ -152,7 +152,7 @@ class Title(models.Model):
         Categories,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='titles',
+
         verbose_name='категория'
     )
     genre = models.ManyToManyField(
@@ -185,7 +185,7 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         validators=(validate_score,),
-        verbose_name='рейтинг', 
+        verbose_name='рейтинг',
     )
     pub_date = models.DateTimeField(
         'Дата добавления',

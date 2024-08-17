@@ -1,8 +1,8 @@
-import datetime
 import re
 
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -16,13 +16,14 @@ from reviews.models import (
     Title,
     Review,
     Comments,
-    User
 )
 
-# User = get_user_model()
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # bio = serializers.CharField(*args, **kwargs)
+
     class Meta:
         model = User
         fields = (
@@ -121,6 +122,10 @@ class TitleSerializer(serializers.ModelSerializer):
             'genre', 'category', 'rating'
         )
 
+    def get_rating(self, obj):
+        rating = obj.reviews.aggregate(Avg('score', default=0))
+        return rating.get('score__avg')
+
 
 class CreateTitleSerializer(serializers.ModelSerializer):
     """Класс сериализатор для создания объектов модели Title."""
@@ -137,17 +142,9 @@ class CreateTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'description',
+            'genre', 'category'
         )
-
-    def validate_year(self, value):
-        if value > datetime.datetime.now().year and value < 0:
-            raise ValidationError(
-                'Вы ввели некорректный год.'
-                'Год создания произведения не может быть больше текущего'
-                'и меньше начала нашей эры.'
-            )
-        return value
 
 
 class CommentsSerializer(serializers.ModelSerializer):

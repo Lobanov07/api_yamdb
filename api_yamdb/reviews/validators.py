@@ -6,18 +6,13 @@ from django.core.exceptions import ValidationError
 
 
 def real_age(value):
-    if value > datetime.datetime.now().year and value < 0:
+    if value > datetime.datetime.now().year or value < 0:
         raise ValidationError(
             'Вы ввели некорректный год.'
             'Год создания произведения не может быть больше текущего'
             'и меньше начала нашей эры.'
         )
 
-def validate_score(value):
-    if value < 1 or value > 10:
-        raise ValidationError(
-            f'Значение должно быть в диапазоне от 1 до 10. Указано: {value}'
-        )
 
 def validate_score(value):
     if value < 1 or value > 10:
