@@ -1,10 +1,6 @@
-import datetime
-<<<<<<< HEAD
-
-=======
 import re
 
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.db.models import Avg
 from rest_framework import serializers
@@ -12,10 +8,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
 
-<<<<<<< HEAD
-from api.mixins import UsernameMixin
-from reviews.models import Categories, Genres, Title, Review, Comments
-=======
 from .mixins import UsernameMixin
 from reviews.validators import validate_confirmation_code
 from reviews.models import (
@@ -24,13 +16,14 @@ from reviews.models import (
     Title,
     Review,
     Comments,
-    User
 )
 
-# User = get_user_model()
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # bio = serializers.CharField(*args, **kwargs)
+
     class Meta:
         model = User
         fields = (
@@ -72,7 +65,6 @@ class SignUpSerializer(serializers.Serializer, UsernameMixin):
 class NotAdminSerializer(serializers.ModelSerializer, UsernameMixin):
     class Meta(UserSerializer.Meta):
         read_only_fields = ('role',)
->>>>>>> 9bd3d623af3deac8dc6a608dbc2ba92be268ba21
 
 
 class ReviewSerializer(serializers.ModelSerializer, UsernameMixin):
@@ -150,17 +142,9 @@ class CreateTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'description',
+            'genre', 'category'
         )
-
-    def validate_year(self, value):
-        if value > datetime.datetime.now().year and value < 0:
-            raise ValidationError(
-                'Вы ввели некорректный год.'
-                'Год создания произведения не может быть больше текущего'
-                'и меньше начала нашей эры.'
-            )
-        return value
 
 
 class CommentsSerializer(serializers.ModelSerializer):

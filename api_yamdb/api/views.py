@@ -4,8 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 from django.db.models import Avg
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -39,11 +38,10 @@ from reviews.models import (
     Categories,
     Genres,
     Title,
-    Review,
-    User
+    Review
 )
 
-# User = get_user_model()
+User = get_user_model()
 
 
 class ListCreateDelViewSet(
@@ -55,7 +53,7 @@ class ListCreateDelViewSet(
     permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
+    search_fields = ('name',)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -99,10 +97,13 @@ class APIGetToken(APIView):
         if data.get('confirmation_code') == user.confirmation_code:
             token = RefreshToken.for_user(user).access_token
             return Response({'token': str(token)},
-                            status=status.HTTP_201_CREATED)
+                            status=status.HTTP_200_OK)
         user.confirmation_code = settings.DEFAULT_CONF_CODE
         user.save()
         raise ValidationError('Неверно! запросите новый код подтверждения')
+        # return Response({'token': str(
+        #     'Неверно! запросите новый код подтверждения')},
+        #     status=status.HTTP_200_OK)
 
 
 class APISignup(APIView):
@@ -118,8 +119,7 @@ class APISignup(APIView):
 
         except IntegrityError:
             raise ValidationError(
-                'Пользователь {} уже зарегистрирован.'.format(
-                    'email' if User.objects.filter(email=email) else 'именем')
+                serializer.data,
             )
 
         user.confirmation_code = ''.join(random.sample(
@@ -170,8 +170,15 @@ class GenresViewSet(ListCreateDelViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     """Класс вьюсет для модели Title."""
 
-    queryset = Title.objects.select_related('category').\
-        prefetch_related('genre').annotate(rating=Avg('reviews__score'))
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).order_by(
+        *Title._meta.ordering
+    ).select_related(
+        'category'
+    ).prefetch_related(
+        'genre'
+    )
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter
     http_method_names = ('get', 'patch', 'post', 'delete')
