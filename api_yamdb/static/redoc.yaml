@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
-  title: 'YaMDb API'
-  version: ''
+  title: "YaMDb API"
+  version: ""
   description: |
     запросы к API начинаются с `/api/v1/`
     # Описание
@@ -23,15 +23,15 @@ servers:
 tags:
   - name: AUTH
     description: Регистрация пользователей и выдача токенов
-  - name: CATEGORIES
+  - name: Category
     description: Категории (типы) произведений
-  - name: GENRES
+  - name: Genre
     description: Категории жанров
   - name: TITLES
     description: Произведения, к которым пишут отзывы (определённый фильм, книга или песенка).
   - name: REVIEWS
     description: Отзывы
-  - name: COMMENTS
+  - name: Comment
     description: Комментарии к отзывам
   - name: USERS
     description: Пользователи
@@ -75,13 +75,13 @@ paths:
                     type: string
                   username:
                     type: string
-          description: 'Удачное выполнение запроса'
-        '400':
+          description: "Удачное выполнение запроса"
+        "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
-          description: 'Отсутствует обязательное поле или оно некорректно'
+                $ref: "#/components/schemas/ValidationError"
+          description: "Отсутствует обязательное поле или оно некорректно"
   /auth/token/:
     post:
       tags:
@@ -110,31 +110,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
-          description: 'Удачное выполнение запроса'
+                $ref: "#/components/schemas/Token"
+          description: "Удачное выполнение запроса"
         400:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
-          description: 'Отсутствует обязательное поле или оно некорректно'
+                $ref: "#/components/schemas/ValidationError"
+          description: "Отсутствует обязательное поле или оно некорректно"
         404:
           description: Пользователь не найден
 
-  /categories/:
+  /Category/:
     get:
       tags:
-        - CATEGORIES
+        - Category
       operationId: Получение списка всех категорий
       description: |
         Получить список всех категорий
         Права доступа: **Доступно без токена**
       parameters:
-      - name: search
-        in: query
-        description: Поиск по названию категории
-        schema:
-          type: string
+        - name: search
+          in: query
+          description: Поиск по названию категории
+          schema:
+            type: string
       responses:
         200:
           description: Удачное выполнение запроса
@@ -152,10 +152,10 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Category'
+                      $ref: "#/components/schemas/Category"
     post:
       tags:
-        - CATEGORIES
+        - Category
       operationId: Добавление новой категории
       description: |
         Создать категорию.
@@ -165,45 +165,45 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Category'
+              $ref: "#/components/schemas/Category"
       responses:
         201:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CategoryRead'
+                $ref: "#/components/schemas/CategoryRead"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
           description: Нет прав доступа
       security:
-      - jwt-token:
-        - write:admin
-  /categories/{slug}/:
+        - jwt-token:
+            - write:admin
+  /Category/{slug}/:
     delete:
       tags:
-        - CATEGORIES
+        - Category
       operationId: Удаление категории
       description: |
         Удалить категорию.
         Права доступа: **Администратор.**
       parameters:
-      - name: slug
-        in: path
-        required: true
-        description: Slug категории
-        schema:
-          type: string
+        - name: slug
+          in: path
+          required: true
+          description: Slug категории
+          schema:
+            type: string
       responses:
         204:
-          description: 'Удачное выполнение запроса'
+          description: "Удачное выполнение запроса"
         401:
           description: Необходим JWT-токен
         403:
@@ -211,23 +211,23 @@ paths:
         404:
           description: Категория не найдена
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
 
-  /genres/:
+  /Genre/:
     get:
       tags:
-        - GENRES
+        - Genre
       operationId: Получение списка всех жанров
       description: |
         Получить список всех жанров.
         Права доступа: **Доступно без токена**
       parameters:
-      - name: search
-        in: query
-        description: Поиск по названию жанра
-        schema:
-          type: string
+        - name: search
+          in: query
+          description: Поиск по названию жанра
+          schema:
+            type: string
       responses:
         200:
           description: Удачное выполнение запроса
@@ -245,10 +245,10 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Genre'
+                      $ref: "#/components/schemas/Genre"
     post:
       tags:
-        - GENRES
+        - Genre
       operationId: Добавление жанра
       description: |
         Добавить жанр.
@@ -258,46 +258,46 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Genre'
+              $ref: "#/components/schemas/Genre"
       responses:
         201:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenreRead'
+                $ref: "#/components/schemas/GenreRead"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
           description: Нет прав доступа
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
 
-  /genres/{slug}/:
+  /Genre/{slug}/:
     delete:
       tags:
-        - GENRES
+        - Genre
       operationId: Удаление жанра
       description: |
         Удалить жанр.
         Права доступа: **Администратор**.
       parameters:
-      - name: slug
-        in: path
-        required: true
-        description: Slug жанра
-        schema:
-          type: string
+        - name: slug
+          in: path
+          required: true
+          description: Slug жанра
+          schema:
+            type: string
       responses:
         204:
-          description: 'Удачное выполнение запроса'
+          description: "Удачное выполнение запроса"
         401:
           description: Необходим JWT-токен
         403:
@@ -305,8 +305,8 @@ paths:
         404:
           description: Жанр не найден
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
 
   /titles/:
     get:
@@ -354,7 +354,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Title'
+                      $ref: "#/components/schemas/Title"
     post:
       tags:
         - TITLES
@@ -369,27 +369,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TitleCreate'
+              $ref: "#/components/schemas/TitleCreate"
       responses:
         201:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Title'
+                $ref: "#/components/schemas/Title"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
           description: Нет прав доступа
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
   /titles/{titles_id}/:
     parameters:
       - name: titles_id
@@ -411,7 +411,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Title'
+                $ref: "#/components/schemas/Title"
         404:
           description: Объект не найден
     patch:
@@ -425,14 +425,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TitleCreate'
+              $ref: "#/components/schemas/TitleCreate"
       responses:
         200:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Title'
+                $ref: "#/components/schemas/Title"
         401:
           description: Необходим JWT-токен
         403:
@@ -440,8 +440,8 @@ paths:
         404:
           description: Объект не найден
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
     delete:
       tags:
         - TITLES
@@ -451,7 +451,7 @@ paths:
         Права доступа: **Администратор**.
       responses:
         204:
-          description: 'Удачное выполнение запроса'
+          description: "Удачное выполнение запроса"
         401:
           description: Необходим JWT-токен
         403:
@@ -459,8 +459,8 @@ paths:
         404:
           description: Произведение не найдено
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
 
   /titles/{title_id}/reviews/:
     parameters:
@@ -494,7 +494,7 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Review'
+                      $ref: "#/components/schemas/Review"
         404:
           description: Произведение не найдено
     post:
@@ -508,27 +508,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Review'
+              $ref: "#/components/schemas/Review"
       responses:
         201:
-          description: 'Удачное выполнение запроса'
+          description: "Удачное выполнение запроса"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: "#/components/schemas/Review"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         404:
           description: Произведение не найдено
       security:
-      - jwt-token:
-        - write:user,moderator,admin
+        - jwt-token:
+            - write:user,moderator,admin
   /titles/{title_id}/reviews/{review_id}/:
     parameters:
       - name: title_id
@@ -556,7 +556,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: "#/components/schemas/Review"
         404:
           description: Произведение или отзыв не найден
     patch:
@@ -570,20 +570,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Review'
+              $ref: "#/components/schemas/Review"
       responses:
         200:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: "#/components/schemas/Review"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
@@ -591,8 +591,8 @@ paths:
         404:
           description: Произведение не найдено
       security:
-      - jwt-token:
-        - write:user,moderator,admin
+        - jwt-token:
+            - write:user,moderator,admin
     delete:
       tags:
         - REVIEWS
@@ -602,7 +602,7 @@ paths:
         Права доступа: **Автор отзыва, модератор или администратор.**
       responses:
         204:
-          description: 'Удачное выполнение запроса'
+          description: "Удачное выполнение запроса"
         401:
           description: Необходим JWT-токен
         403:
@@ -610,10 +610,10 @@ paths:
         404:
           description: Произведение или отзыв не найдены
       security:
-      - jwt-token:
-        - write:user,moderator,admin
+        - jwt-token:
+            - write:user,moderator,admin
 
-  /titles/{title_id}/reviews/{review_id}/comments/:
+  /titles/{title_id}/reviews/{review_id}/Comment/:
     parameters:
       - name: title_id
         in: path
@@ -629,7 +629,7 @@ paths:
           type: integer
     get:
       tags:
-        - COMMENTS
+        - Comment
       operationId: Получение списка всех комментариев к отзыву
       description: |
         Получить список всех комментариев к отзыву по id
@@ -651,12 +651,12 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Comment'
+                      $ref: "#/components/schemas/Comment"
         404:
           description: Не найдено произведение или отзыв
     post:
       tags:
-        - COMMENTS
+        - Comment
       operationId: Добавление комментария к отзыву
       description: |
         Добавить новый комментарий для отзыва.
@@ -665,29 +665,29 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: "#/components/schemas/Comment"
       responses:
         201:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment'
-          description: 'Удачное выполнение запроса'
+                $ref: "#/components/schemas/Comment"
+          description: "Удачное выполнение запроса"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         404:
           description: Не найдено произведение или отзыв
       security:
-      - jwt-token:
-        - write:user,moderator,admin
+        - jwt-token:
+            - write:user,moderator,admin
 
-  /titles/{title_id}/reviews/{review_id}/comments/{comment_id}/:
+  /titles/{title_id}/reviews/{review_id}/Comment/{comment_id}/:
     parameters:
       - name: title_id
         in: path
@@ -709,7 +709,7 @@ paths:
           type: integer
     get:
       tags:
-        - COMMENTS
+        - Comment
       operationId: Получение комментария к отзыву
       description: |
         Получить комментарий для отзыва по id.
@@ -719,13 +719,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment'
-          description: 'Удачное выполнение запроса'
+                $ref: "#/components/schemas/Comment"
+          description: "Удачное выполнение запроса"
         404:
           description: Не найдено произведение, отзыв или комментарий
     patch:
       tags:
-        - COMMENTS
+        - Comment
       operationId: Частичное обновление комментария к отзыву
       description: |
         Частично обновить комментарий к отзыву по id.
@@ -734,20 +734,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: "#/components/schemas/Comment"
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment'
-          description: 'Удачное выполнение запроса'
+                $ref: "#/components/schemas/Comment"
+          description: "Удачное выполнение запроса"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
@@ -755,18 +755,18 @@ paths:
         404:
           description: Не найдено произведение, отзыв или комментарий
       security:
-      - jwt-token:
-        - write:user,moderator,admin
+        - jwt-token:
+            - write:user,moderator,admin
     delete:
       tags:
-        - COMMENTS
+        - Comment
       operationId: Удаление комментария к отзыву
       description: |
         Удалить комментарий к отзыву по id.
         Права доступа: **Автор комментария, модератор или администратор**.
       responses:
         204:
-          description: 'Удачное выполнение запроса'
+          description: "Удачное выполнение запроса"
         401:
           description: Необходим JWT-токен
         403:
@@ -774,8 +774,8 @@ paths:
         404:
           description: Не найдено произведение, отзыв или комментарий
       security:
-      - jwt-token:
-        - write:user,moderator,admin
+        - jwt-token:
+            - write:user,moderator,admin
 
   /users/:
     get:
@@ -786,11 +786,11 @@ paths:
         Получить список всех пользователей.
         Права доступа: **Администратор**
       parameters:
-      - name: search
-        in: query
-        description: Поиск по имени пользователя (username)
-        schema:
-          type: string
+        - name: search
+          in: query
+          description: Поиск по имени пользователя (username)
+          schema:
+            type: string
       responses:
         200:
           description: Удачное выполнение запроса
@@ -808,12 +808,12 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserReadOrPatch'
+                      $ref: "#/components/schemas/UserReadOrPatch"
         401:
           description: Необходим JWT-токен
       security:
-      - jwt-token:
-        - read:admin
+        - jwt-token:
+            - read:admin
     post:
       tags:
         - USERS
@@ -826,27 +826,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         201:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
           description: Нет прав доступа
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
   /users/{username}/:
     parameters:
       - name: username
@@ -868,7 +868,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserReadOrPatch'
+                $ref: "#/components/schemas/UserReadOrPatch"
         401:
           description: Необходим JWT-токен
         403:
@@ -876,8 +876,8 @@ paths:
         404:
           description: Пользователь не найден
       security:
-      - jwt-token:
-        - read:admin
+        - jwt-token:
+            - read:admin
     patch:
       tags:
         - USERS
@@ -890,20 +890,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserReadOrPatch'
+              $ref: "#/components/schemas/UserReadOrPatch"
       responses:
         200:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserReadOrPatch'
+                $ref: "#/components/schemas/UserReadOrPatch"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
         401:
           description: Необходим JWT-токен
         403:
@@ -911,8 +911,8 @@ paths:
         404:
           description: Пользователь не найден
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
     delete:
       tags:
         - USERS
@@ -930,8 +930,8 @@ paths:
         404:
           description: Пользователь не найден
       security:
-      - jwt-token:
-        - write:admin
+        - jwt-token:
+            - write:admin
 
   /users/me/:
     get:
@@ -947,10 +947,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserReadOrPatch'
+                $ref: "#/components/schemas/UserReadOrPatch"
       security:
-      - jwt-token:
-        - read:admin,moderator,user
+        - jwt-token:
+            - read:admin,moderator,user
     patch:
       tags:
         - USERS
@@ -963,38 +963,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Me'
+              $ref: "#/components/schemas/Me"
       responses:
         200:
           description: Удачное выполнение запроса
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
         400:
-          description: 'Отсутствует обязательное поле или оно некорректно'
+          description: "Отсутствует обязательное поле или оно некорректно"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationError'
+                $ref: "#/components/schemas/ValidationError"
       security:
-      - jwt-token:
-        - write:admin,moderator,user
+        - jwt-token:
+            - write:admin,moderator,user
 
 components:
   schemas:
-
     User:
       title: Пользователь
       type: object
       description: Детальная информация о пользователе
       required:
-          - username
-          - email
+        - username
+        - email
       properties:
         username:
           type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+          description:
+            Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
           pattern: ^[\w.@+-]+\Z
           maxLength: 150
@@ -1073,9 +1073,9 @@ components:
         genre:
           type: array
           items:
-            $ref: '#/components/schemas/Genre'
+            $ref: "#/components/schemas/Genre"
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: "#/components/schemas/Category"
 
     TitleCreate:
       title: Объект для изменения
@@ -1116,9 +1116,9 @@ components:
           maxLength: 50
           pattern: ^[-a-zA-Z0-9_]+$
       required:
-      - name
-      - slug
-    
+        - name
+        - slug
+
     GenreRead:
       type: object
       properties:
@@ -1132,8 +1132,8 @@ components:
       type: object
       description: Детальная информация отзыва
       required:
-          - text
-          - score
+        - text
+        - score
       properties:
         id:
           type: integer
@@ -1208,9 +1208,9 @@ components:
           maxLength: 150
         role:
           enum:
-          - admin
-          - moderator
-          - user
+            - admin
+            - moderator
+            - user
           type: string
           readOnly: true
         email:
@@ -1238,8 +1238,8 @@ components:
           maxLength: 50
           pattern: ^[-a-zA-Z0-9_]+$
       required:
-      - name
-      - slug
+        - name
+        - slug
 
     CategoryRead:
       type: object
