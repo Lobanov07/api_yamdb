@@ -2,8 +2,8 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import (
-    CategoriesViewSet,
-    GenresViewSet,
+    CategoryViewSet,
+    GenreViewSet,
     TitleViewSet,
     ReviewViewSet,
     CommentViewSet,
@@ -13,41 +13,25 @@ from .views import (
 )
 
 router = routers.DefaultRouter()
+router.register("Category", CategoryViewSet, basename="Category")
+router.register("Genre", GenreViewSet, basename="Genre")
+router.register("titles", TitleViewSet, basename="titles")
+router.register(r"titles/(?P<title_id>\d+)/reviews", ReviewViewSet, basename="reviews")
 router.register(
-    'categories',
-    CategoriesViewSet,
-    basename='categories'
-)
-router.register(
-    'genres',
-    GenresViewSet,
-    basename='genres'
-)
-router.register(
-    'titles',
-    TitleViewSet,
-    basename='titles'
-)
-router.register(
-    r'titles/(?P<title_id>\d+)/reviews',
-    ReviewViewSet,
-    basename='reviews'
-)
-router.register(
-    r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
+    r"titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/Comment",
     CommentViewSet,
-    basename='comments'
+    basename="Comment",
 )
-router.register('users', UserViewSet)
+router.register("users", UserViewSet)
 
 
 auth = [
-    path('signup/', APISignup.as_view(), name='register'),
-    path('token/', APIGetToken.as_view(), name='token')
+    path("signup/", APISignup.as_view(), name="register"),
+    path("token/", APIGetToken.as_view(), name="token"),
 ]
 
 
 urlpatterns = [
-    path('v1/', include(router.urls)),
-    path('v1/auth/', include(auth)),
+    path("v1/", include(router.urls)),
+    path("v1/auth/", include(auth)),
 ]
