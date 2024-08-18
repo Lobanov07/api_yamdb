@@ -2,7 +2,6 @@ import re
 
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -25,11 +24,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "email", "first_name", "last_name", "bio", "role")
+        fields = ("username", "email", "first_name",
+                  "last_name", "bio", "role")
 
 
 class GetTokenSerializer(serializers.Serializer, UsernameMixin):
-    username = serializers.CharField(required=True, max_length=settings.USER_MAX_LENGTH)
+    username = serializers.CharField(
+        required=True,
+        max_length=settings.USER_MAX_LENGTH
+    )
     confirmation_code = serializers.CharField(
         required=True,
         max_length=settings.CODE_MAX_LEN,
@@ -38,16 +41,29 @@ class GetTokenSerializer(serializers.Serializer, UsernameMixin):
 
     def validate_confirmation_code(self, pin_code):
         if pin_code == settings.DEFAULT_CONF_CODE:
-            raise ValidationError("Ошибка. Сначала получите код подтверждения.")
-        invalid_chars = re.findall(rf"'{re.escape(settings.PATTERN)}\s'", pin_code)
+            raise ValidationError(
+                "Ошибка. Сначала получите код подтверждения."
+            )
+        invalid_chars = re.findall(
+            rf"'{re.escape(settings.PATTERN)}\s'",
+            pin_code
+        )
         if invalid_chars:
-            raise ValidationError(f"Код не должен содержать символы {invalid_chars}")
+            raise ValidationError(
+                f"Код не должен содержать символы {invalid_chars}"
+            )
         return pin_code
 
 
 class SignUpSerializer(serializers.Serializer, UsernameMixin):
-    username = serializers.CharField(required=True, max_length=settings.USER_MAX_LENGTH)
-    email = serializers.EmailField(required=True, max_length=settings.MAX_LENGTH_EMAIL)
+    username = serializers.CharField(
+        required=True,
+        max_length=settings.USER_MAX_LENGTH
+    )
+    email = serializers.EmailField(
+        required=True,
+        max_length=settings.MAX_LENGTH_EMAIL
+    )
 
 
 class NotAdminSerializer(serializers.ModelSerializer, UsernameMixin):
@@ -59,7 +75,9 @@ class ReviewSerializer(serializers.ModelSerializer, UsernameMixin):
     """Класс сериализатор для модели Review."""
 
     author = serializers.SlugRelatedField(
-        default=serializers.CurrentUserDefault(), slug_field="username", read_only=True
+        default=serializers.CurrentUserDefault(),
+        slug_field="username",
+        read_only=True
     )
 
     def validate(self, data):
@@ -109,7 +127,8 @@ class TitleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ("id", "name", "year", "description", "genre", "category", "rating")
+        fields = ("id", "name", "year", "description",
+                  "genre", "category", "rating")
 
 
 class CreateTitleSerializer(serializers.ModelSerializer):
@@ -131,7 +150,9 @@ class CommentSerializer(serializers.ModelSerializer):
     """Класс сериализатор для создания объектов модели Comment."""
 
     author = SlugRelatedField(
-        slug_field="username", default=serializers.CurrentUserDefault(), read_only=True
+        slug_field="username",
+        default=serializers.CurrentUserDefault(),
+        read_only=True
     )
 
     class Meta:
